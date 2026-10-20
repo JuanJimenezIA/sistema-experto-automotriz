@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Experto Automotriz | ESCOM IPN</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4 font-sans">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Encabezado -->
+    <header class="border-b border-slate-700 pb-5 mb-8">
+      <span class="text-xs font-semibold uppercase tracking-widest text-indigo-400">IPN - ESCOM | Paradigmas de Programación</span>
+      <h1 class="text-3xl font-bold mt-1 text-white">Sistema Experto de Diagnóstico Automotriz</h1>
+      <p class="text-slate-400 mt-2 text-sm">Motor de inferencia lógico desarrollado en SWI-Prolog con resolución de conflictos y retroceso.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Panel de Selección de Síntomas -->
+      <section class="md:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-indigo-300">Seleccione los síntomas detectados:</h2>
+        
+        <form id="form-sintomas" class="space-y-6">
+          <!-- Sistema Eléctrico -->
+          <div>
+            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Sistema Eléctrico</h3>
+            <div class="space-y-2">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="no_da_marcha" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>El motor no da marcha al girar la llave</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="luces_debiles" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Faros o tablero con iluminación muy tenue</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="chasquido_al_arrancar" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Se escucha un chasquido (clic-clic) al arrancar</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Sistema de Frenos -->
+          <div>
+            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Sistema de Frenos</h3>
+            <div class="space-y-2">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="pedal_esponjoso" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>El pedal de freno se siente esponjoso o se va al fondo</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="chillido_al_frenar" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Chillido agudo o fricción metálica al frenar</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="distancia_frenado_larga" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Aumento considerable en la distancia de frenado</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="liquido_frenos_bajo" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Nivel de depósito de líquido de frenos bajo</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Motor y Enfriamiento -->
+          <div>
+            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Motor y Enfriamiento</h3>
+            <div class="space-y-2">
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="humo_azul" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Expulsión de humo azul por el escape</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="humo_blanco_denso" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Expulsión de humo blanco denso y persistente</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="temperatura_alta" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>Indicador de temperatura en zona crítica (roja)</span>
+              </label>
+              <label class="flex items-center space-x-3 cursor-pointer">
+                <input type="checkbox" value="ventilador_no_enciende" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
+                <span>El motoventilador del radiador no activa</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="flex space-x-4 pt-2">
+            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold text-white transition">
+              Consultar Sistema Experto
+            </button>
+            <button type="button" id="btn-reset" class="px-5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 font-semibold transition">
+              Limpiar
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Panel de Conclusiones e Inferencias -->
+      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg flex flex-col">
+        <h2 class="text-xl font-semibold mb-4 text-indigo-300">Diagnóstico Inferido</h2>
+        
+        <div id="loading" class="hidden text-center py-10">
+          <div class="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+          <p class="text-slate-400 text-sm">Evaluando reglas en Prolog...</p>
+        </div>
+
+        <div id="resultados-box" class="space-y-4 flex-1">
+          <p class="text-slate-400 text-sm text-center my-auto py-12">
+            Seleccione uno o más síntomas a la izquierda y presione consultar para iniciar la inferencia lógica.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form-sintomas');
+    const resetBtn = document.getElementById('btn-reset');
+    const loading = document.getElementById('loading');
+    const resultadosBox = document.getElementById('resultados-box');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const checkboxes = document.querySelectorAll('#form-sintomas input[type="checkbox"]:checked');
+      const sintomas = Array.from(checkboxes).map(cb => cb.value);
+
+      if (sintomas.length === 0) {
+        resultadosBox.innerHTML = `
+          <div class="bg-yellow-900/30 border border-yellow-600 p-4 rounded-lg text-yellow-300 text-sm">
+            Debe seleccionar al menos un síntoma para que el sistema experto pueda iniciar el razonamiento.
+          </div>`;
+        return;
+      }
+
+      loading.classList.remove('hidden');
+      resultadosBox.innerHTML = '';
+
+      try {
+        const response = await fetch('/api/diagnosticar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sintomas })
+        });
+        const data = await response.json();
+        loading.classList.add('hidden');
+
+        if (data.status === 'sin_coincidencias' || data.diagnosticos.length === 0) {
+          resultadosBox.innerHTML = `
+            <div class="bg-slate-700/50 border border-slate-600 p-4 rounded-lg text-slate-300 text-sm">
+              <strong class="text-white block mb-1">Sin conclusiones directas</strong>
+              Los síntomas reportados no cumplen con las condiciones de las reglas de diagnóstico configuradas.
+            </div>`;
+          return;
+        }
+
+        let html = `<p class="text-xs text-indigo-300 font-semibold mb-2">Conclusiones obtenidas: ${data.total_soluciones}</p>`;
+        
+        data.diagnosticos.forEach(d => {
+          const badgeClass = d.urgencia === 'alta' ? 'bg-red-900 text-red-200' : 'bg-amber-900 text-amber-200';
+          html += `
+            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-lg space-y-2">
+              <div class="flex justify-between items-start">
+                <h4 class="font-bold text-white uppercase text-sm">${d.falla.replace(/_/g, ' ')}</h4>
+                <span class="text-xs uppercase font-bold px-2 py-0.5 rounded ${badgeClass}">${d.urgencia}</span>
+              </div>
+              <p class="text-xs text-slate-400"><strong>Subsistema:</strong> ${d.sistema} | <strong>Pieza:</strong> ${d.pieza.replace(/_/g, ' ')}</p>
+              <p class="text-sm text-indigo-200 bg-indigo-950/40 p-2 rounded border border-indigo-900">
+                <strong>Acción:</strong> ${d.recomendacion}
+              </p>
+            </div>`;
+        });
+
+        resultadosBox.innerHTML = html;
+
+      } catch (err) {
+        loading.classList.add('hidden');
+        resultadosBox.innerHTML = `
+          <div class="bg-red-900/30 border border-red-600 p-4 rounded-lg text-red-300 text-sm">
+            Error de conexión con el servicio de inferencia.
+          </div>`;
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      resultadosBox.innerHTML = `
+        <p class="text-slate-400 text-sm text-center my-auto py-12">
+          Seleccione uno o más síntomas a la izquierda y presione consultar para iniciar la inferencia lógica.
+        </p>`;
+    });
+  </script>
+</body>
+</html>
