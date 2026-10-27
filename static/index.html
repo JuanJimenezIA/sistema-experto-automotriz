@@ -4,73 +4,179 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Diagnóstico Automotriz | ESCOM IPN</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-    .chip input:checked + span { background: rgb(99 102 241 / .18); border-color: rgb(129 140 248); color: #fff; }
-    .chip input:checked + span .dot { background: rgb(129 140 248); border-color: rgb(129 140 248); }
-    .chip input:focus-visible + span { outline: 2px solid rgb(129 140 248); outline-offset: 2px; }
-    .fade-in { animation: fade .35s ease both; }
-    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-    .gauge { background: radial-gradient(circle at 50% 120%, rgb(99 102 241 / .25), transparent 60%); }
+    :root {
+      --papel: #f3efe6;
+      --papel-2: #ebe5d8;
+      --tarjeta: #fbf9f4;
+      --tinta: #1d1b18;
+      --tinta-2: #57524a;
+      --tinta-3: #8b857a;
+      --linea: #d9d2c3;
+      --naranja: #e8590c;
+      --naranja-suave: #fde3d3;
+      --critica: #c92a2a;
+      --alta: #e8590c;
+      --media: #d9a400;
+      --baja: #2b8a3e;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Archivo', system-ui, sans-serif;
+      background: var(--papel);
+      color: var(--tinta);
+      background-image: radial-gradient(var(--linea) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .contenedor { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+
+    /* Cinta superior tipo advertencia */
+    .cinta {
+      height: 10px;
+      background: repeating-linear-gradient(-45deg, var(--tinta) 0 14px, var(--naranja) 14px 28px);
+    }
+
+    header { padding: 36px 0 28px; border-bottom: 2px solid var(--tinta); margin-bottom: 28px; }
+    .etiqueta { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-2); }
+    h1 { font-size: clamp(34px, 6vw, 64px); line-height: .95; font-weight: 900; letter-spacing: -.03em; margin: 10px 0 14px; text-transform: uppercase; }
+    h1 span { color: var(--naranja); }
+    .sub { max-width: 640px; color: var(--tinta-2); font-size: 16px; line-height: 1.5; margin: 0; }
+    .sub b { color: var(--tinta); }
+
+    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 960px) { .grid { grid-template-columns: 420px 1fr; } }
+
+    .panel { background: var(--tarjeta); border: 2px solid var(--tinta); border-radius: 4px; box-shadow: 6px 6px 0 var(--tinta); }
+    @media (min-width: 960px) { .panel.fijo { position: sticky; top: 20px; } }
+    .panel-cab { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 2px solid var(--tinta); }
+    .panel-cab h2 { margin: 0; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+    .paso { font-family: var(--mono); background: var(--tinta); color: var(--papel); padding: 2px 7px; margin-right: 8px; border-radius: 2px; font-size: 12px; }
+    .contador { font-family: var(--mono); font-size: 12px; padding: 3px 8px; border: 1.5px solid var(--tinta); border-radius: 2px; }
+    .contador.activo { background: var(--naranja); border-color: var(--naranja); color: #fff; }
+
+    .lista { padding: 6px 18px 4px; max-height: 58vh; overflow-y: auto; }
+    .grupo { padding: 14px 0 8px; border-bottom: 1px dashed var(--linea); }
+    .grupo:last-child { border-bottom: 0; }
+    .grupo h3 { margin: 0 0 10px; font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-3); display: flex; gap: 8px; align-items: center; }
+    .grupo h3::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
+
+    .chip { display: block; cursor: pointer; margin-bottom: 7px; }
+    .chip input { position: absolute; opacity: 0; pointer-events: none; }
+    .chip span {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 12px; border: 1.5px solid var(--linea); border-radius: 3px;
+      background: #fff; font-size: 14.5px; font-weight: 500; transition: all .12s;
+    }
+    .chip span::before {
+      content: ""; width: 16px; height: 16px; flex-shrink: 0;
+      border: 2px solid var(--tinta); border-radius: 2px; background: #fff; transition: all .12s;
+    }
+    .chip:hover span { border-color: var(--tinta); }
+    .chip input:checked + span { border-color: var(--naranja); background: var(--naranja-suave); }
+    .chip input:checked + span::before {
+      background: var(--naranja) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='white' stroke-width='2.4'/%3E%3C/svg%3E") center/12px no-repeat;
+      border-color: var(--naranja);
+    }
+    .chip input:focus-visible + span { outline: 3px solid var(--naranja); outline-offset: 2px; }
+
+    .acciones { display: flex; gap: 10px; padding: 16px 18px 18px; border-top: 2px solid var(--tinta); }
+    button { font-family: inherit; cursor: pointer; border-radius: 3px; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 14px 16px; transition: transform .08s, box-shadow .08s, background .12s; }
+    .btn-principal { flex: 1; background: var(--naranja); color: #fff; border: 2px solid var(--tinta); box-shadow: 3px 3px 0 var(--tinta); }
+    .btn-principal:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--tinta); }
+    .btn-principal:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
+    .btn-principal:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-sec { background: transparent; color: var(--tinta); border: 2px solid var(--tinta); }
+    .btn-sec:hover { background: var(--papel-2); }
+
+    /* Resultados */
+    .titulo-res { display: flex; align-items: center; margin: 0 0 14px; font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+    .vacio { border: 2px dashed var(--tinta-3); border-radius: 4px; padding: 56px 24px; text-align: center; color: var(--tinta-2); background: rgba(251, 249, 244, .7); }
+    .vacio .icono { font-size: 44px; margin-bottom: 10px; }
+
+    .resumen { position: relative; overflow: hidden; border: 2px solid var(--tinta); border-radius: 4px; padding: 20px 22px 20px 26px; margin-bottom: 20px; background: var(--tarjeta); box-shadow: 6px 6px 0 var(--tinta); }
+    .resumen::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: var(--color, var(--tinta)); }
+    .resumen .tag { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-3); }
+    .resumen h3 { margin: 4px 0 6px; font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; color: var(--color, var(--tinta)); }
+    .resumen p { margin: 0; color: var(--tinta-2); line-height: 1.5; }
+    .resumen .conteo { margin-top: 12px; font-family: var(--mono); font-size: 12px; color: var(--tinta-2); }
+    .resumen.urgente { background: repeating-linear-gradient(-45deg, #fff5f5 0 16px, #fdeaea 16px 32px); }
+
+    .tarjeta { background: var(--tarjeta); border: 2px solid var(--tinta); border-radius: 4px; margin-bottom: 16px; animation: entra .3s ease both; }
+    @keyframes entra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .t-cab { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-start; padding: 16px 18px 12px; }
+    .t-cab h4 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+    .t-meta { margin-top: 4px; font-size: 13.5px; color: var(--tinta-2); }
+    .t-meta b { color: var(--tinta); font-weight: 600; }
+    .insignias { display: flex; gap: 6px; flex-wrap: wrap; }
+    .insignia { font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding: 4px 8px; border-radius: 2px; border: 1.5px solid currentColor; }
+    .insignia.llena { color: #fff; }
+    .medidor { display: flex; gap: 3px; padding: 0 18px; }
+    .medidor i { flex: 1; height: 6px; background: var(--papel-2); border-radius: 1px; }
+    .revisar { margin: 14px 18px 0; padding: 12px 14px; background: var(--papel); border-left: 4px solid var(--tinta); }
+    .revisar .tag { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--tinta-3); margin-bottom: 3px; }
+    .revisar p { margin: 0; font-weight: 500; line-height: 1.45; }
+
+    details { margin: 12px 18px 16px; }
+    summary { cursor: pointer; font-weight: 700; font-size: 14px; color: var(--naranja); list-style: none; user-select: none; }
+    summary::-webkit-details-marker { display: none; }
+    summary::before { content: "+ "; font-family: var(--mono); }
+    details[open] summary::before { content: "− "; }
+    .explica { margin-top: 10px; font-size: 14px; color: var(--tinta-2); line-height: 1.5; }
+    .explica p { margin: 8px 0 6px; }
+    .explica code { font-family: var(--mono); font-size: 12.5px; background: var(--papel-2); padding: 1px 5px; border-radius: 2px; color: var(--tinta); }
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill { font-size: 12.5px; padding: 3px 8px; border-radius: 2px; border: 1.5px solid var(--tinta); background: #fff; color: var(--tinta); }
+    .pill.si { background: var(--tinta); color: var(--papel); }
+
+    .cargando { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 56px 24px; border: 2px solid var(--tinta); border-radius: 4px; background: var(--tarjeta); }
+    .rueda { width: 44px; height: 44px; border-radius: 50%; border: 5px solid var(--papel-2); border-top-color: var(--naranja); animation: gira .8s linear infinite; }
+    @keyframes gira { to { transform: rotate(360deg); } }
+    .error { border: 2px solid var(--critica); background: #fff5f5; border-radius: 4px; padding: 18px; color: var(--critica); }
+
+    footer { margin: 48px 0 0; padding: 18px 0 30px; border-top: 2px solid var(--tinta); font-family: var(--mono); font-size: 12px; color: var(--tinta-2); display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen">
-  <div class="absolute inset-x-0 top-0 h-72 gauge pointer-events-none"></div>
+<body>
+  <div class="cinta"></div>
 
-  <div class="relative max-w-6xl mx-auto px-4 py-8 sm:py-12">
-
-    <!-- Encabezado -->
-    <header class="mb-8 sm:mb-10">
-      <span class="text-xs font-semibold uppercase tracking-widest text-indigo-400">IPN · ESCOM · Paradigmas de Programación</span>
-      <h1 class="text-3xl sm:text-4xl font-extrabold mt-2 text-white">Diagnóstico Automotriz</h1>
-      <p class="text-slate-400 mt-2 max-w-2xl">
-        Marca lo que notas en tu auto. El motor de inferencia en <b class="text-slate-200">SWI-Prolog</b>
-        evalúa los hechos y reglas y te dice qué podría estar fallando, qué tan urgente es y qué revisar.
+  <div class="contenedor">
+    <header>
+      <div class="etiqueta">IPN · ESCOM · Paradigmas de Programación · Sistema experto</div>
+      <h1>Diagnóstico <span>automotriz</span></h1>
+      <p class="sub">
+        Marca lo que notas en tu auto. El motor de inferencia en <b>SWI-Prolog</b> evalúa hechos y reglas
+        para decirte qué podría estar fallando, qué tan urgente es y qué revisar.
       </p>
     </header>
 
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-
-      <!-- Panel de síntomas -->
-      <section class="lg:col-span-2">
-        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 lg:sticky lg:top-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="font-bold text-lg">1. Síntomas</h2>
-            <span id="contador" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-300">0 seleccionados</span>
-          </div>
-
-          <div id="sintomas" class="space-y-5 max-h-[60vh] overflow-y-auto pr-1">
-            <p class="text-slate-500 text-sm">Cargando síntomas desde Prolog…</p>
-          </div>
-
-          <div class="flex gap-3 mt-5">
-            <button id="btnDiagnosticar" class="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition">
-              Diagnosticar
-            </button>
-            <button id="btnLimpiar" class="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition">
-              Limpiar
-            </button>
-          </div>
+    <div class="grid">
+      <section class="panel fijo">
+        <div class="panel-cab">
+          <h2><span class="paso">01</span>Síntomas</h2>
+          <span id="contador" class="contador">0 marcados</span>
+        </div>
+        <div id="sintomas" class="lista">
+          <p style="color:var(--tinta-3)">Cargando síntomas desde Prolog…</p>
+        </div>
+        <div class="acciones">
+          <button id="btnDiagnosticar" class="btn-principal" disabled>Diagnosticar</button>
+          <button id="btnLimpiar" class="btn-sec">Limpiar</button>
         </div>
       </section>
 
-      <!-- Panel de resultados -->
-      <section class="lg:col-span-3">
-        <h2 class="font-bold text-lg mb-4">2. Resultado</h2>
-        <div id="resultados">
-          <div class="border border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-500">
-            <div class="text-4xl mb-3">🔧</div>
-            Selecciona uno o más síntomas y presiona <b class="text-slate-300">Diagnosticar</b>.
-          </div>
-        </div>
+      <section>
+        <h2 class="titulo-res"><span class="paso">02</span>Resultado</h2>
+        <div id="resultados"></div>
       </section>
     </div>
 
-    <footer class="mt-12 text-center text-xs text-slate-600">
-      Herramienta de orientación educativa. No sustituye la revisión de un mecánico profesional.
+    <footer>
+      <span>Orientación educativa · No sustituye la revisión de un mecánico.</span>
+      <span>FastAPI + SWI-Prolog</span>
     </footer>
   </div>
 
@@ -86,26 +192,33 @@
     };
 
     const URGENCIA = {
-      critica: { txt: 'Crítica', cls: 'bg-red-500/15 text-red-300 border-red-500/40', barra: 'bg-red-500' },
-      alta:    { txt: 'Alta',    cls: 'bg-orange-500/15 text-orange-300 border-orange-500/40', barra: 'bg-orange-500' },
-      media:   { txt: 'Media',   cls: 'bg-amber-500/15 text-amber-300 border-amber-500/40', barra: 'bg-amber-400' },
-      baja:    { txt: 'Baja',    cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40', barra: 'bg-emerald-500' },
+      critica: { txt: 'Crítica', color: 'var(--critica)', nivel: 4 },
+      alta:    { txt: 'Alta',    color: 'var(--alta)',    nivel: 3 },
+      media:   { txt: 'Media',   color: 'var(--media)',   nivel: 2 },
+      baja:    { txt: 'Baja',    color: 'var(--baja)',    nivel: 1 },
     };
     const ORDEN_URG = { critica: 0, alta: 1, media: 2, baja: 3 };
 
     const CLASE = {
-      urgente:          { t: '¡Atención urgente!', d: 'Al menos una causa posible es crítica. Detén el vehículo y revisa antes de seguir conduciendo.', cls: 'from-red-600/30 border-red-500/50', icon: '🚨' },
-      mas_informacion:  { t: 'Faltan datos', d: 'Con lo reportado hay varias causas posibles. Marca más síntomas para afinar el diagnóstico.', cls: 'from-sky-600/25 border-sky-500/40', icon: '❓' },
-      revision_pronta:  { t: 'Revisión pronta', d: 'Conviene llevar el auto a revisión en los próximos días.', cls: 'from-amber-600/25 border-amber-500/40', icon: '⚠️' },
-      revision_normal:  { t: 'Revisión normal', d: 'No parece urgente, pero agenda una revisión.', cls: 'from-emerald-600/25 border-emerald-500/40', icon: '✅' },
-      sin_coincidencias:{ t: 'Sin coincidencias', d: 'La base de conocimientos no encontró causas para esos síntomas.', cls: 'from-slate-600/25 border-slate-500/40', icon: '🔍' },
+      urgente:           { t: 'Atención urgente', d: 'Al menos una causa posible es crítica. Detén el vehículo y revisa antes de seguir conduciendo.', color: 'var(--critica)', icon: '🚨' },
+      mas_informacion:   { t: 'Faltan datos', d: 'Con lo reportado hay varias causas posibles. Marca más síntomas para afinar el diagnóstico.', color: 'var(--tinta)', icon: '❓' },
+      revision_pronta:   { t: 'Revisión pronta', d: 'Conviene llevar el auto a revisión en los próximos días.', color: 'var(--alta)', icon: '⚠️' },
+      revision_normal:   { t: 'Revisión normal', d: 'No parece urgente, pero agenda una revisión.', color: 'var(--baja)', icon: '✅' },
+      sin_coincidencias: { t: 'Sin coincidencias', d: 'La base de conocimientos no encontró causas para esos síntomas.', color: 'var(--tinta-2)', icon: '🔍' },
     };
+
+    const VACIO = `
+      <div class="vacio">
+        <div class="icono">🔧</div>
+        Marca uno o más síntomas y presiona <b>Diagnosticar</b>.
+      </div>`;
 
     const bonito = id => {
       const t = id.replace(/_/g, ' ').replace(/\bdanad(a|o)s?\b/g, m => m.replace('n', 'ñ'));
       return t.charAt(0).toUpperCase() + t.slice(1);
     };
     const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const plural = (n, s) => `${n} ${s}${n === 1 ? '' : 's'}`;
 
     const $sintomas = document.getElementById('sintomas');
     const $res = document.getElementById('resultados');
@@ -117,7 +230,8 @@
     }
     function actualizarContador() {
       const n = seleccionados().length;
-      $contador.textContent = `${n} seleccionado${n === 1 ? '' : 's'}`;
+      $contador.textContent = plural(n, 'marcado');
+      $contador.classList.toggle('activo', n > 0);
       $btn.disabled = n === 0;
     }
 
@@ -131,24 +245,19 @@
         $sintomas.innerHTML = Object.entries(grupos).map(([sis, ids]) => {
           const [nombre, icono] = SISTEMAS[sis] || [bonito(sis), '•'];
           return `
-            <div>
-              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${icono} ${esc(nombre)}</h3>
-              <div class="flex flex-col gap-2">
-                ${ids.map(id => `
-                  <label class="chip cursor-pointer">
-                    <input type="checkbox" value="${esc(id)}" class="sr-only">
-                    <span class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-800 bg-slate-950/60 text-slate-300 text-sm hover:border-slate-600 transition">
-                      <span class="dot w-4 h-4 rounded-md border-2 border-slate-600 shrink-0 transition"></span>
-                      ${esc(bonito(id))}
-                    </span>
-                  </label>`).join('')}
-              </div>
+            <div class="grupo">
+              <h3>${icono} ${esc(nombre)}</h3>
+              ${ids.map(id => `
+                <label class="chip">
+                  <input type="checkbox" value="${esc(id)}">
+                  <span>${esc(bonito(id))}</span>
+                </label>`).join('')}
             </div>`;
         }).join('');
         $sintomas.addEventListener('change', actualizarContador);
         actualizarContador();
       } catch {
-        $sintomas.innerHTML = `<p class="text-red-300 text-sm">No se pudieron cargar los síntomas. Recarga la página.</p>`;
+        $sintomas.innerHTML = `<p style="color:var(--critica)">No se pudieron cargar los síntomas. Recarga la página.</p>`;
       }
     }
 
@@ -156,70 +265,59 @@
       const u = URGENCIA[d.urgencia] || URGENCIA.media;
       const probable = d.certeza === 'probable';
       const [sisNombre, sisIcono] = SISTEMAS[d.sistema] || [bonito(d.sistema), '•'];
+      const barras = [1, 2, 3, 4].map(n => `<i style="${n <= u.nivel ? `background:${u.color}` : ''}"></i>`).join('');
       return `
-        <article class="fade-in bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden" style="animation-delay:${i * 60}ms">
-          <div class="h-1 ${u.barra}"></div>
-          <div class="p-5">
-            <div class="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <h3 class="text-lg font-bold text-white">${esc(bonito(d.causa))}</h3>
-                <p class="text-sm text-slate-400 mt-0.5">${sisIcono} ${esc(sisNombre)} · Pieza: <span class="text-slate-300">${esc(bonito(d.componente))}</span></p>
-              </div>
-              <div class="flex gap-2">
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${u.cls}">Urgencia ${u.txt}</span>
-                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${probable ? 'bg-indigo-500/15 text-indigo-300 border-indigo-500/40' : 'bg-slate-800 text-slate-300 border-slate-700'}">${probable ? 'Probable' : 'Posible'}</span>
-              </div>
+        <article class="tarjeta" style="animation-delay:${i * 70}ms">
+          <div class="t-cab">
+            <div>
+              <h4>${esc(bonito(d.causa))}</h4>
+              <div class="t-meta">${sisIcono} ${esc(sisNombre)} · Pieza: <b>${esc(bonito(d.componente))}</b></div>
             </div>
-
-            <div class="mt-4 rounded-xl bg-slate-950/70 border border-slate-800 p-3.5">
-              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Qué revisar</p>
-              <p class="text-slate-200 text-sm">${esc(d.verificacion)}</p>
+            <div class="insignias">
+              <span class="insignia llena" style="background:${u.color};border-color:${u.color}">Urgencia ${u.txt}</span>
+              <span class="insignia ${probable ? 'llena' : ''}" style="${probable ? 'background:var(--tinta);border-color:var(--tinta)' : 'color:var(--tinta-2)'}">${probable ? 'Probable' : 'Posible'}</span>
             </div>
-
-            <details class="mt-3 group">
-              <summary class="cursor-pointer text-sm text-indigo-300 hover:text-indigo-200 select-none">¿Cómo llegó a esta conclusión?</summary>
-              <div class="mt-3 text-sm text-slate-300 space-y-2">
-                <p>Síntomas que la apoyan (<code class="text-indigo-300">rel_sintoma_causa/2</code>):</p>
-                <div class="flex flex-wrap gap-1.5">${d.apoyo.map(s => `<span class="px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-200 text-xs">${esc(bonito(s))}</span>`).join('')}</div>
-                <p class="text-slate-400">Regla <code class="text-indigo-300">certeza/3</code>: ${d.apoyo.length} síntoma${d.apoyo.length === 1 ? '' : 's'} coincidente${d.apoyo.length === 1 ? '' : 's'} → <b>${probable ? 'probable' : 'posible'}</b> (se requieren 2 o más para considerarla probable).</p>
-                ${d.por_confirmar.length ? `
-                  <p class="pt-1">Para confirmarla, revisa si también ocurre (<code class="text-indigo-300">sintomas_por_confirmar/3</code>):</p>
-                  <div class="flex flex-wrap gap-1.5">${d.por_confirmar.map(s => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs">${esc(bonito(s))}</span>`).join('')}</div>` : ''}
-              </div>
-            </details>
           </div>
+          <div class="medidor" title="Nivel de urgencia">${barras}</div>
+          <div class="revisar">
+            <div class="tag">Qué revisar</div>
+            <p>${esc(d.verificacion)}</p>
+          </div>
+          <details>
+            <summary>¿Cómo llegó a esta conclusión?</summary>
+            <div class="explica">
+              <p>Síntomas reportados que la apoyan (<code>rel_sintoma_causa/2</code>):</p>
+              <div class="pills">${d.apoyo.map(s => `<span class="pill si">${esc(bonito(s))}</span>`).join('')}</div>
+              <p>Regla <code>certeza/3</code>: ${plural(d.apoyo.length, 'síntoma')} coincidente${d.apoyo.length === 1 ? '' : 's'} → <b>${probable ? 'probable' : 'posible'}</b> (con 2 o más se considera probable).</p>
+              ${d.por_confirmar.length ? `
+                <p>Para confirmarla, revisa si también ocurre (<code>sintomas_por_confirmar/3</code>):</p>
+                <div class="pills">${d.por_confirmar.map(s => `<span class="pill">${esc(bonito(s))}</span>`).join('')}</div>` : ''}
+            </div>
+          </details>
         </article>`;
     }
 
     function render(data) {
       const c = CLASE[data.clasificacion] || CLASE.sin_coincidencias;
+      const peso = d => d.certeza === 'probable' ? 0 : 1;
       const diags = [...(data.diagnosticos || [])].sort((a, b) =>
-        (ORDEN_URG[a.urgencia] - ORDEN_URG[b.urgencia]) || (a.certeza === 'probable' ? -1 : 1) - (b.certeza === 'probable' ? -1 : 1));
+        (ORDEN_URG[a.urgencia] - ORDEN_URG[b.urgencia]) || (peso(a) - peso(b)));
 
-      const resumen = `
-        <div class="fade-in rounded-2xl border bg-gradient-to-br ${c.cls} to-transparent p-5 mb-5">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl">${c.icon}</div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-white">${c.t}</h3>
-              <p class="text-slate-300 text-sm mt-1">${data.mensaje ? esc(data.mensaje) : c.d}</p>
-              ${diags.length ? `<p class="text-xs text-slate-400 mt-3">${diags.length} causa${diags.length === 1 ? '' : 's'} posible${diags.length === 1 ? '' : 's'} encontrada${diags.length === 1 ? '' : 's'} por backtracking</p>` : ''}
-            </div>
-          </div>
-        </div>`;
-
-      $res.innerHTML = resumen + `<div class="space-y-4">${diags.map(tarjeta).join('')}</div>`;
+      $res.innerHTML = `
+        <div class="resumen ${data.clasificacion === 'urgente' ? 'urgente' : ''}" style="--color:${c.color}">
+          <div class="tag">Clasificación del caso · clasificar_caso/2</div>
+          <h3>${c.icon} ${c.t}</h3>
+          <p>${data.mensaje ? esc(data.mensaje) : c.d}</p>
+          ${diags.length ? `<div class="conteo">${plural(diags.length, 'causa')} encontrada${diags.length === 1 ? '' : 's'} por backtracking</div>` : ''}
+        </div>
+        ${diags.map(tarjeta).join('')}`;
     }
 
     async function diagnosticar() {
       const sintomas = seleccionados();
       $btn.disabled = true;
       $btn.textContent = 'Razonando…';
-      $res.innerHTML = `
-        <div class="border border-slate-800 rounded-2xl p-10 text-center text-slate-400">
-          <div class="inline-block w-8 h-8 border-4 border-slate-700 border-t-indigo-400 rounded-full animate-spin mb-3"></div>
-          <p>Prolog está evaluando las reglas…</p>
-        </div>`;
+      $res.innerHTML = `<div class="cargando"><div class="rueda"></div><div>Prolog está evaluando las reglas…</div></div>`;
       try {
         const r = await fetch('/api/diagnosticar', {
           method: 'POST',
@@ -231,9 +329,9 @@
         render(data);
       } catch (e) {
         $res.innerHTML = `
-          <div class="rounded-2xl border border-red-500/40 bg-red-500/10 p-5 text-red-200">
+          <div class="error">
             <b>No se pudo completar el diagnóstico.</b>
-            <p class="text-sm mt-1">${esc(e.message)}. Intenta de nuevo en unos segundos.</p>
+            <div style="margin-top:4px">${esc(e.message)}. Intenta de nuevo en unos segundos.</div>
           </div>`;
       } finally {
         $btn.textContent = 'Diagnosticar';
@@ -245,13 +343,10 @@
     document.getElementById('btnLimpiar').addEventListener('click', () => {
       document.querySelectorAll('#sintomas input:checked').forEach(i => (i.checked = false));
       actualizarContador();
-      $res.innerHTML = `
-        <div class="border border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-500">
-          <div class="text-4xl mb-3">🔧</div>
-          Selecciona uno o más síntomas y presiona <b class="text-slate-300">Diagnosticar</b>.
-        </div>`;
+      $res.innerHTML = VACIO;
     });
 
+    $res.innerHTML = VACIO;
     cargarSintomas();
   </script>
 </body>
