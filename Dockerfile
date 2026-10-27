@@ -13,7 +13,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el archivo de Prolog, la API y la carpeta estática
-COPY prueba.pl .
+COPY diagnostico_automotriz.pl .
 COPY main.py .
 COPY static ./static
 

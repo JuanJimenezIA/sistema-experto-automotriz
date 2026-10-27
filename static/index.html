@@ -3,197 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema Experto Automotriz | ESCOM IPN</title>
+  <title>Diagnóstico Automotriz | ESCOM IPN</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .chip input:checked + span { background: rgb(99 102 241 / .18); border-color: rgb(129 140 248); color: #fff; }
+    .chip input:checked + span .dot { background: rgb(129 140 248); border-color: rgb(129 140 248); }
+    .chip input:focus-visible + span { outline: 2px solid rgb(129 140 248); outline-offset: 2px; }
+    .fade-in { animation: fade .35s ease both; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .gauge { background: radial-gradient(circle at 50% 120%, rgb(99 102 241 / .25), transparent 60%); }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4 font-sans">
-  <div class="max-w-4xl mx-auto">
-    
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div class="absolute inset-x-0 top-0 h-72 gauge pointer-events-none"></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 py-8 sm:py-12">
+
     <!-- Encabezado -->
-    <header class="border-b border-slate-700 pb-5 mb-8">
-      <span class="text-xs font-semibold uppercase tracking-widest text-indigo-400">IPN - ESCOM | Paradigmas de Programación</span>
-      <h1 class="text-3xl font-bold mt-1 text-white">Sistema Experto de Diagnóstico Automotriz</h1>
-      <p class="text-slate-400 mt-2 text-sm">Motor de inferencia lógico desarrollado en SWI-Prolog con resolución de conflictos y retroceso.</p>
+    <header class="mb-8 sm:mb-10">
+      <span class="text-xs font-semibold uppercase tracking-widest text-indigo-400">IPN · ESCOM · Paradigmas de Programación</span>
+      <h1 class="text-3xl sm:text-4xl font-extrabold mt-2 text-white">Diagnóstico Automotriz</h1>
+      <p class="text-slate-400 mt-2 max-w-2xl">
+        Marca lo que notas en tu auto. El motor de inferencia en <b class="text-slate-200">SWI-Prolog</b>
+        evalúa los hechos y reglas y te dice qué podría estar fallando, qué tan urgente es y qué revisar.
+      </p>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      
-      <!-- Panel de Selección de Síntomas -->
-      <section class="md:col-span-2 bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-        <h2 class="text-xl font-semibold mb-4 text-indigo-300">Seleccione los síntomas detectados:</h2>
-        
-        <form id="form-sintomas" class="space-y-6">
-          <!-- Sistema Eléctrico -->
-          <div>
-            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Sistema Eléctrico</h3>
-            <div class="space-y-2">
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="no_da_marcha" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>El motor no da marcha al girar la llave</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="luces_debiles" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Faros o tablero con iluminación muy tenue</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="chasquido_al_arrancar" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Se escucha un chasquido (clic-clic) al arrancar</span>
-              </label>
-            </div>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+      <!-- Panel de síntomas -->
+      <section class="lg:col-span-2">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 lg:sticky lg:top-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-bold text-lg">1. Síntomas</h2>
+            <span id="contador" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-300">0 seleccionados</span>
           </div>
 
-          <!-- Sistema de Frenos -->
-          <div>
-            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Sistema de Frenos</h3>
-            <div class="space-y-2">
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="pedal_esponjoso" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>El pedal de freno se siente esponjoso o se va al fondo</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="chillido_al_frenar" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Chillido agudo o fricción metálica al frenar</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="distancia_frenado_larga" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Aumento considerable en la distancia de frenado</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="liquido_frenos_bajo" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Nivel de depósito de líquido de frenos bajo</span>
-              </label>
-            </div>
+          <div id="sintomas" class="space-y-5 max-h-[60vh] overflow-y-auto pr-1">
+            <p class="text-slate-500 text-sm">Cargando síntomas desde Prolog…</p>
           </div>
 
-          <!-- Motor y Enfriamiento -->
-          <div>
-            <h3 class="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">Motor y Enfriamiento</h3>
-            <div class="space-y-2">
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="humo_azul" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Expulsión de humo azul por el escape</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="humo_blanco_denso" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Expulsión de humo blanco denso y persistente</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="temperatura_alta" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>Indicador de temperatura en zona crítica (roja)</span>
-              </label>
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input type="checkbox" value="ventilador_no_enciende" class="rounded bg-slate-900 border-slate-600 text-indigo-600 focus:ring-0">
-                <span>El motoventilador del radiador no activa</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Botones de Acción -->
-          <div class="flex space-x-4 pt-2">
-            <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 py-3 rounded-lg font-bold text-white transition">
-              Consultar Sistema Experto
+          <div class="flex gap-3 mt-5">
+            <button id="btnDiagnosticar" class="flex-1 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition">
+              Diagnosticar
             </button>
-            <button type="button" id="btn-reset" class="px-5 bg-slate-700 hover:bg-slate-600 rounded-lg text-slate-300 font-semibold transition">
+            <button id="btnLimpiar" class="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 transition">
               Limpiar
             </button>
           </div>
-        </form>
-      </section>
-
-      <!-- Panel de Conclusiones e Inferencias -->
-      <section class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg flex flex-col">
-        <h2 class="text-xl font-semibold mb-4 text-indigo-300">Diagnóstico Inferido</h2>
-        
-        <div id="loading" class="hidden text-center py-10">
-          <div class="animate-spin h-8 w-8 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-3"></div>
-          <p class="text-slate-400 text-sm">Evaluando reglas en Prolog...</p>
-        </div>
-
-        <div id="resultados-box" class="space-y-4 flex-1">
-          <p class="text-slate-400 text-sm text-center my-auto py-12">
-            Seleccione uno o más síntomas a la izquierda y presione consultar para iniciar la inferencia lógica.
-          </p>
         </div>
       </section>
 
+      <!-- Panel de resultados -->
+      <section class="lg:col-span-3">
+        <h2 class="font-bold text-lg mb-4">2. Resultado</h2>
+        <div id="resultados">
+          <div class="border border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-500">
+            <div class="text-4xl mb-3">🔧</div>
+            Selecciona uno o más síntomas y presiona <b class="text-slate-300">Diagnosticar</b>.
+          </div>
+        </div>
+      </section>
     </div>
+
+    <footer class="mt-12 text-center text-xs text-slate-600">
+      Herramienta de orientación educativa. No sustituye la revisión de un mecánico profesional.
+    </footer>
   </div>
 
   <script>
-    const form = document.getElementById('form-sintomas');
-    const resetBtn = document.getElementById('btn-reset');
-    const loading = document.getElementById('loading');
-    const resultadosBox = document.getElementById('resultados-box');
+    const SISTEMAS = {
+      encendido_y_arranque: ['Encendido y arranque', '🔋'],
+      funcionamiento_motor: ['Funcionamiento del motor', '⚙️'],
+      enfriamiento: ['Enfriamiento', '🌡️'],
+      frenos: ['Frenos', '🛑'],
+      suspension_y_direccion: ['Suspensión y dirección', '🛞'],
+      lubricacion: ['Lubricación', '🛢️'],
+      motor_interno: ['Motor interno', '🔩'],
+    };
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const checkboxes = document.querySelectorAll('#form-sintomas input[type="checkbox"]:checked');
-      const sintomas = Array.from(checkboxes).map(cb => cb.value);
+    const URGENCIA = {
+      critica: { txt: 'Crítica', cls: 'bg-red-500/15 text-red-300 border-red-500/40', barra: 'bg-red-500' },
+      alta:    { txt: 'Alta',    cls: 'bg-orange-500/15 text-orange-300 border-orange-500/40', barra: 'bg-orange-500' },
+      media:   { txt: 'Media',   cls: 'bg-amber-500/15 text-amber-300 border-amber-500/40', barra: 'bg-amber-400' },
+      baja:    { txt: 'Baja',    cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/40', barra: 'bg-emerald-500' },
+    };
+    const ORDEN_URG = { critica: 0, alta: 1, media: 2, baja: 3 };
 
-      if (sintomas.length === 0) {
-        resultadosBox.innerHTML = `
-          <div class="bg-yellow-900/30 border border-yellow-600 p-4 rounded-lg text-yellow-300 text-sm">
-            Debe seleccionar al menos un síntoma para que el sistema experto pueda iniciar el razonamiento.
-          </div>`;
-        return;
-      }
+    const CLASE = {
+      urgente:          { t: '¡Atención urgente!', d: 'Al menos una causa posible es crítica. Detén el vehículo y revisa antes de seguir conduciendo.', cls: 'from-red-600/30 border-red-500/50', icon: '🚨' },
+      mas_informacion:  { t: 'Faltan datos', d: 'Con lo reportado hay varias causas posibles. Marca más síntomas para afinar el diagnóstico.', cls: 'from-sky-600/25 border-sky-500/40', icon: '❓' },
+      revision_pronta:  { t: 'Revisión pronta', d: 'Conviene llevar el auto a revisión en los próximos días.', cls: 'from-amber-600/25 border-amber-500/40', icon: '⚠️' },
+      revision_normal:  { t: 'Revisión normal', d: 'No parece urgente, pero agenda una revisión.', cls: 'from-emerald-600/25 border-emerald-500/40', icon: '✅' },
+      sin_coincidencias:{ t: 'Sin coincidencias', d: 'La base de conocimientos no encontró causas para esos síntomas.', cls: 'from-slate-600/25 border-slate-500/40', icon: '🔍' },
+    };
 
-      loading.classList.remove('hidden');
-      resultadosBox.innerHTML = '';
+    const bonito = id => {
+      const t = id.replace(/_/g, ' ').replace(/\bdanad(a|o)s?\b/g, m => m.replace('n', 'ñ'));
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    };
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+    const $sintomas = document.getElementById('sintomas');
+    const $res = document.getElementById('resultados');
+    const $btn = document.getElementById('btnDiagnosticar');
+    const $contador = document.getElementById('contador');
+
+    function seleccionados() {
+      return [...document.querySelectorAll('#sintomas input:checked')].map(i => i.value);
+    }
+    function actualizarContador() {
+      const n = seleccionados().length;
+      $contador.textContent = `${n} seleccionado${n === 1 ? '' : 's'}`;
+      $btn.disabled = n === 0;
+    }
+
+    async function cargarSintomas() {
       try {
-        const response = await fetch('/api/diagnosticar', {
+        const r = await fetch('/api/sintomas');
+        if (!r.ok) throw new Error();
+        const lista = await r.json();
+        const grupos = {};
+        lista.forEach(s => (grupos[s.sistema] ??= []).push(s.id));
+        $sintomas.innerHTML = Object.entries(grupos).map(([sis, ids]) => {
+          const [nombre, icono] = SISTEMAS[sis] || [bonito(sis), '•'];
+          return `
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">${icono} ${esc(nombre)}</h3>
+              <div class="flex flex-col gap-2">
+                ${ids.map(id => `
+                  <label class="chip cursor-pointer">
+                    <input type="checkbox" value="${esc(id)}" class="sr-only">
+                    <span class="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-slate-800 bg-slate-950/60 text-slate-300 text-sm hover:border-slate-600 transition">
+                      <span class="dot w-4 h-4 rounded-md border-2 border-slate-600 shrink-0 transition"></span>
+                      ${esc(bonito(id))}
+                    </span>
+                  </label>`).join('')}
+              </div>
+            </div>`;
+        }).join('');
+        $sintomas.addEventListener('change', actualizarContador);
+        actualizarContador();
+      } catch {
+        $sintomas.innerHTML = `<p class="text-red-300 text-sm">No se pudieron cargar los síntomas. Recarga la página.</p>`;
+      }
+    }
+
+    function tarjeta(d, i) {
+      const u = URGENCIA[d.urgencia] || URGENCIA.media;
+      const probable = d.certeza === 'probable';
+      const [sisNombre, sisIcono] = SISTEMAS[d.sistema] || [bonito(d.sistema), '•'];
+      return `
+        <article class="fade-in bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden" style="animation-delay:${i * 60}ms">
+          <div class="h-1 ${u.barra}"></div>
+          <div class="p-5">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-bold text-white">${esc(bonito(d.causa))}</h3>
+                <p class="text-sm text-slate-400 mt-0.5">${sisIcono} ${esc(sisNombre)} · Pieza: <span class="text-slate-300">${esc(bonito(d.componente))}</span></p>
+              </div>
+              <div class="flex gap-2">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${u.cls}">Urgencia ${u.txt}</span>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${probable ? 'bg-indigo-500/15 text-indigo-300 border-indigo-500/40' : 'bg-slate-800 text-slate-300 border-slate-700'}">${probable ? 'Probable' : 'Posible'}</span>
+              </div>
+            </div>
+
+            <div class="mt-4 rounded-xl bg-slate-950/70 border border-slate-800 p-3.5">
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Qué revisar</p>
+              <p class="text-slate-200 text-sm">${esc(d.verificacion)}</p>
+            </div>
+
+            <details class="mt-3 group">
+              <summary class="cursor-pointer text-sm text-indigo-300 hover:text-indigo-200 select-none">¿Cómo llegó a esta conclusión?</summary>
+              <div class="mt-3 text-sm text-slate-300 space-y-2">
+                <p>Síntomas que la apoyan (<code class="text-indigo-300">rel_sintoma_causa/2</code>):</p>
+                <div class="flex flex-wrap gap-1.5">${d.apoyo.map(s => `<span class="px-2 py-0.5 rounded-md bg-indigo-500/15 text-indigo-200 text-xs">${esc(bonito(s))}</span>`).join('')}</div>
+                <p class="text-slate-400">Regla <code class="text-indigo-300">certeza/3</code>: ${d.apoyo.length} síntoma${d.apoyo.length === 1 ? '' : 's'} coincidente${d.apoyo.length === 1 ? '' : 's'} → <b>${probable ? 'probable' : 'posible'}</b> (se requieren 2 o más para considerarla probable).</p>
+                ${d.por_confirmar.length ? `
+                  <p class="pt-1">Para confirmarla, revisa si también ocurre (<code class="text-indigo-300">sintomas_por_confirmar/3</code>):</p>
+                  <div class="flex flex-wrap gap-1.5">${d.por_confirmar.map(s => `<span class="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs">${esc(bonito(s))}</span>`).join('')}</div>` : ''}
+              </div>
+            </details>
+          </div>
+        </article>`;
+    }
+
+    function render(data) {
+      const c = CLASE[data.clasificacion] || CLASE.sin_coincidencias;
+      const diags = [...(data.diagnosticos || [])].sort((a, b) =>
+        (ORDEN_URG[a.urgencia] - ORDEN_URG[b.urgencia]) || (a.certeza === 'probable' ? -1 : 1) - (b.certeza === 'probable' ? -1 : 1));
+
+      const resumen = `
+        <div class="fade-in rounded-2xl border bg-gradient-to-br ${c.cls} to-transparent p-5 mb-5">
+          <div class="flex items-start gap-4">
+            <div class="text-3xl">${c.icon}</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-white">${c.t}</h3>
+              <p class="text-slate-300 text-sm mt-1">${data.mensaje ? esc(data.mensaje) : c.d}</p>
+              ${diags.length ? `<p class="text-xs text-slate-400 mt-3">${diags.length} causa${diags.length === 1 ? '' : 's'} posible${diags.length === 1 ? '' : 's'} encontrada${diags.length === 1 ? '' : 's'} por backtracking</p>` : ''}
+            </div>
+          </div>
+        </div>`;
+
+      $res.innerHTML = resumen + `<div class="space-y-4">${diags.map(tarjeta).join('')}</div>`;
+    }
+
+    async function diagnosticar() {
+      const sintomas = seleccionados();
+      $btn.disabled = true;
+      $btn.textContent = 'Razonando…';
+      $res.innerHTML = `
+        <div class="border border-slate-800 rounded-2xl p-10 text-center text-slate-400">
+          <div class="inline-block w-8 h-8 border-4 border-slate-700 border-t-indigo-400 rounded-full animate-spin mb-3"></div>
+          <p>Prolog está evaluando las reglas…</p>
+        </div>`;
+      try {
+        const r = await fetch('/api/diagnosticar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sintomas })
+          body: JSON.stringify({ sintomas }),
         });
-        const data = await response.json();
-        loading.classList.add('hidden');
-
-        if (data.status === 'sin_coincidencias' || data.diagnosticos.length === 0) {
-          resultadosBox.innerHTML = `
-            <div class="bg-slate-700/50 border border-slate-600 p-4 rounded-lg text-slate-300 text-sm">
-              <strong class="text-white block mb-1">Sin conclusiones directas</strong>
-              Los síntomas reportados no cumplen con las condiciones de las reglas de diagnóstico configuradas.
-            </div>`;
-          return;
-        }
-
-        let html = `<p class="text-xs text-indigo-300 font-semibold mb-2">Conclusiones obtenidas: ${data.total_soluciones}</p>`;
-        
-        data.diagnosticos.forEach(d => {
-          const badgeClass = d.urgencia === 'alta' ? 'bg-red-900 text-red-200' : 'bg-amber-900 text-amber-200';
-          html += `
-            <div class="bg-slate-900/80 border border-slate-700 p-4 rounded-lg space-y-2">
-              <div class="flex justify-between items-start">
-                <h4 class="font-bold text-white uppercase text-sm">${d.falla.replace(/_/g, ' ')}</h4>
-                <span class="text-xs uppercase font-bold px-2 py-0.5 rounded ${badgeClass}">${d.urgencia}</span>
-              </div>
-              <p class="text-xs text-slate-400"><strong>Subsistema:</strong> ${d.sistema} | <strong>Pieza:</strong> ${d.pieza.replace(/_/g, ' ')}</p>
-              <p class="text-sm text-indigo-200 bg-indigo-950/40 p-2 rounded border border-indigo-900">
-                <strong>Acción:</strong> ${d.recomendacion}
-              </p>
-            </div>`;
-        });
-
-        resultadosBox.innerHTML = html;
-
-      } catch (err) {
-        loading.classList.add('hidden');
-        resultadosBox.innerHTML = `
-          <div class="bg-red-900/30 border border-red-600 p-4 rounded-lg text-red-300 text-sm">
-            Error de conexión con el servicio de inferencia.
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || 'Error del servidor');
+        render(data);
+      } catch (e) {
+        $res.innerHTML = `
+          <div class="rounded-2xl border border-red-500/40 bg-red-500/10 p-5 text-red-200">
+            <b>No se pudo completar el diagnóstico.</b>
+            <p class="text-sm mt-1">${esc(e.message)}. Intenta de nuevo en unos segundos.</p>
           </div>`;
+      } finally {
+        $btn.textContent = 'Diagnosticar';
+        actualizarContador();
       }
+    }
+
+    $btn.addEventListener('click', diagnosticar);
+    document.getElementById('btnLimpiar').addEventListener('click', () => {
+      document.querySelectorAll('#sintomas input:checked').forEach(i => (i.checked = false));
+      actualizarContador();
+      $res.innerHTML = `
+        <div class="border border-dashed border-slate-800 rounded-2xl p-10 text-center text-slate-500">
+          <div class="text-4xl mb-3">🔧</div>
+          Selecciona uno o más síntomas y presiona <b class="text-slate-300">Diagnosticar</b>.
+        </div>`;
     });
 
-    resetBtn.addEventListener('click', () => {
-      form.reset();
-      resultadosBox.innerHTML = `
-        <p class="text-slate-400 text-sm text-center my-auto py-12">
-          Seleccione uno o más síntomas a la izquierda y presione consultar para iniciar la inferencia lógica.
-        </p>`;
-    });
+    cargarSintomas();
   </script>
 </body>
 </html>

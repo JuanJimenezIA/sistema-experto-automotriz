@@ -22,7 +22,7 @@ Sistema experto basado en programación declarativa que atiende la problemática
 El sistema implementa una arquitectura desacoplada en tres capas contenidas en un contenedor Docker:
 1. **Frontend:** Interfaz web desarrollada con HTML5, Tailwind CSS y JavaScript asíncrono para el envío y recepción de datos.
 2. **Servicio Web / API:** Backend en Python utilizando FastAPI, encargado de validar las entradas, formular las consultas lógicas a Prolog y estructurar las respuestas en formato JSON.
-3. **Motor de Inferencia:** SWI-Prolog ejecutando la base de conocimientos (`prueba.pl`), aplicando unificación, variables lógicas y retroceso (backtracking) para resolver múltiples conclusiones simultáneas.
+3. **Motor de Inferencia:** SWI-Prolog ejecutando la base de conocimientos (`diagnostico_automotriz.pl`), aplicando unificación, variables lógicas y retroceso (backtracking) para resolver múltiples conclusiones simultáneas.
 
 ---
 
