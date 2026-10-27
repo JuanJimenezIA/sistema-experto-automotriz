@@ -29,6 +29,7 @@ class DiagnosticoRequest(BaseModel):
 def ejecutar_prolog(goal: str) -> dict:
     """Carga la base de conocimientos, ejecuta un objetivo que imprime JSON y lo regresa como dict."""
     envuelto = (
+        f"use_module(library(http/json)), "
         f"catch(({goal}), E, (print_message(error, E), halt(1))), halt."
     )
     try:
